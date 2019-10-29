@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'common/global.dart';
+import 'common/screen_args.dart';
 import 'stores/user_store.dart';
 import 'stores/game_store.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/games_screen.dart';
+import 'screens/game_screen.dart';
 
 void main() => Global.init().then((e) => runApp(Admin()));
 
@@ -29,6 +31,17 @@ class Admin extends StatelessWidget {
           '/': (context) => HomeScreen(),
           '/login': (context) => LoginScreen(),
           '/games': (context) => GamesScreen(),
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          final ScreenArgs args = settings.arguments;
+
+          if (settings.name == '/game') {
+            return MaterialPageRoute(
+              builder: (context) => GameScreen(id: args.id),
+            );
+          }
+
+          return null;
         },
       ),
     );

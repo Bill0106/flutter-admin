@@ -32,6 +32,9 @@ abstract class GameStoreBase with Store {
   bool isFetching = false;
 
   @action
+  Game getGameById(String id) => list.firstWhere((i) => i.id == id);
+
+  @action
   void nextPage() {
     page++;
     this.fetchList();
