@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_admin/stores/user_store.dart';
+import 'package:provider/provider.dart';
 
 class NavDrawer extends StatelessWidget {
   final menus = [
@@ -21,6 +23,7 @@ class NavDrawer extends StatelessWidget {
                 ],
               ),
             ),
+            buildLogout(context),
           ],
         ),
       ),
@@ -54,5 +57,26 @@ class NavDrawer extends StatelessWidget {
     );
 
     return menuWidgets.toList();
+  }
+
+  Widget buildLogout(BuildContext context) {
+    final UserStore store = Provider.of<UserStore>(context);
+
+    return Container(
+      padding: EdgeInsets.only(bottom: 32),
+      child: Align(
+        child: FlatButton.icon(
+          icon: Icon(Icons.exit_to_app),
+          label: Text('Logout'),
+          onPressed: () {
+            store.logout();
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/login',
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
+      ),
+    );
   }
 }

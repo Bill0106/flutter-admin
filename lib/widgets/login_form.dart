@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_admin/stores/user_store.dart';
 import 'package:flutter_admin/widgets/loading_dialog.dart';
 
 class LoginForm extends StatelessWidget {
@@ -36,16 +39,7 @@ class LoginForm extends StatelessWidget {
               style: TextStyle(fontSize: 18.0),
             ),
             onPressed: () {
-              // if (usernameCtrl.text == '' || passwordCtrl.text == '') {
-              //   return;
-              // }
-
-              showLoading(context);
-              Future(() {
-                Future.delayed(Duration(seconds: 3), () {
-                  Navigator.pop(context);
-                });
-              });
+              handleLogin(context);
             },
           ),
         ),
@@ -53,12 +47,42 @@ class LoginForm extends StatelessWidget {
     );
   }
 
-  showLoading(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return LoadingDialog();
-      },
-    );
+  Future<void> handleLogin(BuildContext context) async {
+    if (usernameCtrl.text == '' || passwordCtrl.text == '') {
+      return;
+    }
+
+    final store = Provider.of<UserStore>(context);
+
+    showDialog(context: context, builder: (context) => LoadingDialog());
+    try {
+      await store.login(
+        username: usernameCtrl.text,
+        password: passwordCtrl.text,
+      );
+      Navigator.pushReplacementNamed(context, '/');
+    } catch (e) {
+      Navigator.pop(context);
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Icon(
+                  Icons.highlight_off,
+                  color: Colors.red,
+                ),
+              ),
+              Text(
+                e.toString(),
+                style: TextStyle(fontSize: 16.0),
+              )
+            ],
+          ),
+        ),
+      );
+    }
   }
 }
