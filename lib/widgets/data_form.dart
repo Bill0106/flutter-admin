@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_admin/widgets/date_picker.dart';
-import 'package:flutter_admin/widgets/select.dart';
+import 'date_picker.dart';
+import 'select.dart';
+import 'rating.dart';
 
-enum FieldType { text, select, date }
+enum FieldType { text, select, date, rating }
 
 class DataFormField {
   final String label;
@@ -63,6 +64,13 @@ class _DataFormState extends State<DataForm> {
                       options: i.options,
                       onSelect: (selected) {
                         data[fieldName] = selected;
+                      },
+                    );
+                  case FieldType.rating:
+                    return Rating(
+                      initialValue: i.value == null ? 0 : int.parse(i.value),
+                      onRate: (rate) {
+                        data[i.fieldName] = rate.toString();
                       },
                     );
                   default:

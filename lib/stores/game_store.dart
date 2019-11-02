@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
-import 'package:flutter_admin/common/Constants.dart';
+import 'package:flutter_admin/common/constants.dart';
 import 'package:flutter_admin/common/list_data.dart';
 import 'package:flutter_admin/common/global.dart';
 import 'package:flutter_admin/models/game.dart';

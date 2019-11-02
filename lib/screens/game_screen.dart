@@ -89,6 +89,11 @@ class _GameScreenState extends State<GameScreen> {
             type: FieldType.select,
             options: store.platforms,
           ),
+          DataFormField(
+            type: FieldType.rating,
+            fieldName: 'rate',
+            value: game == null ? '' : game.rate.toString(),
+          )
         ];
 
         return Scaffold(
