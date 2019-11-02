@@ -33,20 +33,22 @@ class _GamesState extends State<GamesScreen> {
         title: 'Games',
         columns: ['Title', 'Name', 'Genre', 'Buy At'],
         rows: store.list
-            .map((i) => DataRow(cells: [
-                  DataCell(
-                    Text(i.title),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                        '/game',
-                        arguments: ScreenArgs(i.id),
-                      );
-                    },
-                  ),
-                  DataCell(Text(i.name)),
-                  DataCell(Text(i.genre)),
-                  DataCell(Text(i.buyAt.substring(0, 10)))
-                ]))
+            .map(
+              (i) => DataRow(cells: [
+                DataCell(
+                  Text(i.title),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      '/game',
+                      arguments: ScreenArgs(i.id),
+                    );
+                  },
+                ),
+                DataCell(Text(i.name)),
+                DataCell(Text(i.genre)),
+                DataCell(Text(i.buyAt.substring(0, 10)))
+              ]),
+            )
             .toList(),
         page: store.page,
         total: store.total,

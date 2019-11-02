@@ -3,8 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_admin/models/game.dart';
 import 'package:flutter_admin/stores/game_store.dart';
-import 'package:flutter_admin/widgets/date_picker.dart';
-import 'package:flutter_admin/widgets/select.dart';
+import 'package:flutter_admin/widgets/data_form.dart';
 
 class GameScreen extends StatefulWidget {
   final String id;
@@ -16,8 +15,6 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     Future(() {
@@ -25,6 +22,10 @@ class _GameScreenState extends State<GameScreen> {
 
       if (store.genres.length == 0) {
         store.fetchGenres();
+      }
+
+      if (store.platforms.length == 0) {
+        store.fetchPlatforms();
       }
     });
 
@@ -34,87 +35,75 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final GameStore store = Provider.of<GameStore>(context);
-    final Game game = store.getGameById(widget.id);
-    final Map<String, dynamic> json = game == null ? Map() : game.toJson();
-
-    final textFields = [
-      {'title': 'Title', 'value': game.title},
-      {'title': 'Name', 'value': game.name},
-      {'title': 'Developer', 'value': game.developer},
-      {'title': 'Publisher', 'value': game.publisher},
-      {'title': 'URL', 'value': game.url},
-    ];
 
     return Observer(
-      builder: (_) => Scaffold(
-        appBar: AppBar(
-          title: Text('Edit Game'),
-        ),
-        body: Container(
-          padding: EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      ...textFields
-                          .map(
-                            (i) => TextFormField(
-                              initialValue: i['value'],
-                              decoration:
-                                  InputDecoration(labelText: i['title']),
-                              onSaved: (text) {
-                                setState(() {
-                                  json[i['title'].toLowerCase()] = text;
-                                });
-                              },
-                            ),
-                          )
-                          .toList(),
-                      DatePicker(
-                        label: 'Release At',
-                        initialValue: game.releaseAt,
-                        onSelectedDate: (DateTime date) {
-                          json['releaseAt'] = date.toIso8601String();
-                        },
-                      ),
-                      DatePicker(
-                        label: 'Buy At',
-                        initialValue: game.buyAt,
-                        onSelectedDate: (DateTime date) {
-                          json['buyAt'] = date.toIso8601String();
-                        },
-                      ),
-                      Select(
-                        label: 'Genre',
-                        initialValue: game.genre,
-                        options: store.genres,
-                        onSelect: (String value) {
-                          json['genre'] = value;
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: RaisedButton(
-                    child: Text('Submit'),
-                    onPressed: () {
-                      _formKey.currentState.save();
+      builder: (_) {
+        final Game game = store.getGameById(widget.id);
+        final List<DataFormField> fields = [
+          DataFormField(
+            label: 'Title',
+            value: game == null ? '' : game.title,
+            type: FieldType.text,
+          ),
+          DataFormField(
+            label: 'Name',
+            value: game == null ? '' : game.name,
+            type: FieldType.text,
+          ),
+          DataFormField(
+            label: 'Developer',
+            value: game == null ? '' : game.developer,
+            type: FieldType.text,
+          ),
+          DataFormField(
+            label: 'Publisher',
+            value: game == null ? '' : game.publisher,
+            type: FieldType.text,
+          ),
+          DataFormField(
+            label: 'Release At',
+            fieldName: 'releaseAt',
+            value: game == null ? '' : game.releaseAt,
+            type: FieldType.date,
+          ),
+          DataFormField(
+            label: 'Buy At',
+            fieldName: 'buyAt',
+            value: game == null ? '' : game.buyAt,
+            type: FieldType.date,
+          ),
+          DataFormField(
+            label: 'URL',
+            value: game == null ? '' : game.url,
+            type: FieldType.text,
+          ),
+          DataFormField(
+            label: 'Genre',
+            value: game == null ? '' : game.genre,
+            type: FieldType.select,
+            options: store.genres,
+          ),
+          DataFormField(
+            label: 'Platform',
+            value: game == null ? '' : game.platform,
+            type: FieldType.select,
+            options: store.platforms,
+          ),
+        ];
 
-                      Game change = Game.fromJson(json);
-                      print(change.genre);
-                    },
-                  ),
-                )
-              ],
+        return Scaffold(
+          appBar: AppBar(title: Text('Edit Game')),
+          body: Container(
+            padding: EdgeInsets.all(16.0),
+            child: DataForm(
+              fields: fields,
+              onSubmit: (data) {
+                print({...game.toJson(), ...data});
+              },
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

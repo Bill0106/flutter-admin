@@ -23,6 +23,9 @@ abstract class GameStoreBase with Store {
   List<String> genres = [];
 
   @observable
+  List<String> platforms = [];
+
+  @observable
   int page = 1;
 
   @observable
@@ -71,8 +74,14 @@ abstract class GameStoreBase with Store {
     try {
       var res = await Global.dio.get('/game-genres');
       genres = List<String>.from(res.data);
-    } on DioError catch (e) {
-      throw (e.response == null ? e.response.statusMessage : 'Login Error');
-    }
+    } on DioError catch (_) {}
+  }
+
+  @action
+  Future<void> fetchPlatforms() async {
+    try {
+      var res = await Global.dio.get('/game-platforms');
+      platforms = List<String>.from(res.data);
+    } on DioError catch (_) {}
   }
 }
