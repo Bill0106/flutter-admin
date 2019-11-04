@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_admin/models/game.dart';
 import 'package:flutter_admin/stores/game_store.dart';
 import 'package:flutter_admin/widgets/data_form.dart';
+import 'package:flutter_admin/widgets/loading_dialog.dart';
 
 class GameScreen extends StatefulWidget {
   final String id;
@@ -102,8 +103,13 @@ class _GameScreenState extends State<GameScreen> {
             padding: EdgeInsets.all(16.0),
             child: DataForm(
               fields: fields,
-              onSubmit: (data) {
-                print({...game.toJson(), ...data});
+              onSubmit: (data) async {
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => LoadingDialog(),
+                // );
+                await store.updateGame(widget.id, data);
+                Navigator.popUntil(context, ModalRoute.withName('/games'));
               },
             ),
           ),

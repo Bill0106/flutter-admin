@@ -70,6 +70,22 @@ abstract class GameStoreBase with Store {
   }
 
   @action
+  Future<void> updateGame(String id, Map<String, dynamic> data) async {
+    print('update');
+    try {
+      Game origin = list.firstWhere((i) => i.id == id);
+      if (origin == null) {
+        throw ('Game Not Found');
+      }
+
+      Map<String, dynamic> change = {...origin.toJson(), ...data};
+      await Global.dio.post('/games/${origin.url}', data: change);
+    } on DioError catch (e) {
+      throw e;
+    }
+  }
+
+  @action
   Future<void> fetchGenres() async {
     try {
       var res = await Global.dio.get('/game-genres');
